@@ -113,9 +113,7 @@ def submit():
     else:
         storageLocation = storage_location_entry.get()
     url = url_entry.get()
-    fileName = file.headers["Content-Disposition"].split("filename=")[1]
     print(f"url: {url}")
-    print(f"fileName: {fileName}")
     print(f"storage location: {storageLocation}")
     print(f"stored in program files: {storedInProgramFiles}")
     print(f"create shortcut: {createShortcut}")
@@ -142,6 +140,9 @@ def submit():
         append_to_output_box("Please check the URL and try again." + "\n")
         time.sleep(5)
         sys.exit()
+        
+    fileName = file.headers["Content-Disposition"].split("filename=")[1]
+    print(f"fileName: {fileName}")
 
     if not fileName.endswith(".zip"):
         print("Fail")
