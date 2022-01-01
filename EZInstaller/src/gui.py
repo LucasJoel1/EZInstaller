@@ -113,9 +113,7 @@ def submit():
     else:
         storageLocation = storage_location_entry.get()
     url = url_entry.get()
-    fileName = url.split("/")[-1]
     print(f"url: {url}")
-    print(f"fileName: {fileName}")
     print(f"storage location: {storageLocation}")
     print(f"stored in program files: {storedInProgramFiles}")
     print(f"create shortcut: {createShortcut}")
@@ -142,11 +140,31 @@ def submit():
         append_to_output_box("Please check the URL and try again." + "\n")
         time.sleep(5)
         sys.exit()
-    fileName = file.url.split("/")[-1]
 
-    if "." not in fileName:
-        append_to_output_box("Error: " + "File must have an extension." + "\n")
-        append_to_output_box("Please check the URL and try again." + "\n")
+    fileName = file.headers["Content-Disposition"].split("filename=")[1]
+    print(f"fileName: {fileName}")
+
+    append_to_output_box("Checking file type..." + "\n")
+    if fileName.endswith(".exe"):
+        isExe = True
+        append_to_output_box("File is an executable." + "\n")
+    elif fileName.endswith(".zip"):
+        isZip = True
+        append_to_output_box("File is a zip file." + "\n")
+    elif fileName.endswith(".rar"):
+        isRar = True
+        append_to_output_box("File is a rar file." + "\n")
+    elif fileName.endswith(".msi"):
+        isMsi = True
+        append_to_output_box("File is an MSI file." + "\n")
+    else:
+        isOther = True
+        append_to_output_box("File is not an executable, zip, rar, or MSI file." + "\n")
+        time.sleep(5)
+        sys.exit()
+
+    if isOther == True:
+        append_to_output_box("Error: File is invalid \n")
         time.sleep(5)
         sys.exit()
     append_to_output_box(f"File found, download {fileName} to {storageLocation}" + "\n")
@@ -171,27 +189,6 @@ def submit():
                     append_to_output_box("Download complete." + "\n")
                     f.close()
                     break
-
-    append_to_output_box("Checking file type..." + "\n")
-    type = fileName.split(".")[-1]
-    append_to_output_box(f"File type: {type}" + "\n")
-    if type == "exe":
-        isExe = True
-        append_to_output_box("File is an executable." + "\n")
-    elif type == "zip":
-        isZip = True
-        append_to_output_box("File is a zip file." + "\n")
-    elif type == "rar":
-        isRar = True
-        append_to_output_box("File is a rar file." + "\n")
-    elif type == "msi":
-        isMsi = True
-        append_to_output_box("File is an MSI file." + "\n")
-    else:
-        isOther = True
-        append_to_output_box("File is not an executable, zip, rar, or MSI file." + "\n")
-        time.sleep(5)
-        sys.exit()
 
     if isExe == True:
         append_to_output_box("Running file..." + "\n")
