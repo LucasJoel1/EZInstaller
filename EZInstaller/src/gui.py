@@ -144,7 +144,8 @@ def submit():
         sys.exit()
     fileName = file.url.split("/")[-1]
 
-    if ".exe" or ".zip" or ".rar" or ".msi" not in fileName:
+    print(f"fileName: {fileName}")
+    if not fileName.endswith(".exe" or ".zip" or ".rar" or ".msi"):
         append_to_output_box("Error: " + "File must have an extension." + "\n")
         append_to_output_box("Please check the URL and try again." + "\n")
         time.sleep(5)
