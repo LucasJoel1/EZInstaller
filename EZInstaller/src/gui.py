@@ -142,7 +142,7 @@ def submit():
         append_to_output_box("Please check the URL and try again." + "\n")
         time.sleep(5)
         sys.exit()
-    fileName = file.url.split("/")[-1]
+    fileName = file.headers["Content-Disposition"].split("filename=")[1]
 
     print(f"fileName: {fileName}")
     if not fileName.endswith(".exe" or ".zip" or ".rar" or ".msi"):
