@@ -113,7 +113,7 @@ def submit():
     else:
         storageLocation = storage_location_entry.get()
     url = url_entry.get()
-    fileName = url.split("/")[-1]
+    fileName = file.headers["Content-Disposition"].split("filename=")[1]
     print(f"url: {url}")
     print(f"fileName: {fileName}")
     print(f"storage location: {storageLocation}")
@@ -142,14 +142,12 @@ def submit():
         append_to_output_box("Please check the URL and try again." + "\n")
         time.sleep(5)
         sys.exit()
-    fileName = file.headers["Content-Disposition"].split("filename=")[1]
 
     if not fileName.endswith(".zip"):
         print("Fail")
     else:
         print("Success")
 
-    print(f"fileName: {fileName}")
     if not fileName.endswith(".exe" or ".zip" or ".rar" or ".msi"):
         append_to_output_box("Error: " + "File must have an extension." + "\n")
         append_to_output_box("Please check the URL and try again." + "\n")
