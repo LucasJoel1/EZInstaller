@@ -144,6 +144,9 @@ def submit():
         sys.exit()
     fileName = file.headers["Content-Disposition"].split("filename=")[1]
 
+    if not fileName.endswith(".zip"):
+        print("Fail")
+
     print(f"fileName: {fileName}")
     if not fileName.endswith(".exe" or ".zip" or ".rar" or ".msi"):
         append_to_output_box("Error: " + "File must have an extension." + "\n")
