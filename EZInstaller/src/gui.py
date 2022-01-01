@@ -285,5 +285,5 @@ submit_button.grid(column=1, row=6, sticky=W, padx=10, pady=10)
 
 root.title("EzInstaller")
 root.geometry("800x600")
-root.iconbitmap("C:/Program Files/EZInstaller/assets/pictures/logo.ico")
+root.iconbitmap("C:\\Program Files\\EZInstaller\\EZInstaller\\assets\\pictures\\logo.ico")
 root.mainloop()

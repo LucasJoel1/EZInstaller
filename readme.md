@@ -9,7 +9,7 @@ EZInstaller is a tool for installing programs on windows through zip files.
 3. run `git clone https://github.com/LucasJoel1/EZInstaller.git`
 4. cd to the EZInstaller src directory
 5. based on your preference run `python gui.py` or `python terminal.py` to start the program and make sure everything is working
-6. create a shortcut on your desktop to launcher.exe which is outside the src directory
+6. create a shortcut on your desktop to launcher.exe which is outside the src directory and give the "run as admin"
 
 ## Development
 To edit the the program simply using your favorite ide edit the files in the src directory to your preference.
