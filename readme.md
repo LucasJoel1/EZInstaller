@@ -15,4 +15,4 @@ EZInstaller is a tool for installing programs on windows through zip files.
 To edit the the program simply using your favorite ide edit the files in the src directory to your preference.
 
 ## Bug Reprts
-This is still a very early build of the final product so expect bugs in the program.  If you find any please report them or if you are able to fix them yourself and submit a pr with the fix.  Fixing them yourself is greatly apreciated as I am a fulltime student and am making this project on my free time which I do nto have much of.
+This is still a very early build of the final product so expect bugs in the program.  If you find any please report them or if you are able to fix them yourself and submit a pr with the fix.  Fixing them yourself is greatly apreciated as I am a fulltime student and am making this project on my free time which I do not have much of.
