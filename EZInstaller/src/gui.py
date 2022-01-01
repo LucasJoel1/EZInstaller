@@ -146,6 +146,8 @@ def submit():
 
     if not fileName.endswith(".zip"):
         print("Fail")
+    else:
+        print("Success")
 
     print(f"fileName: {fileName}")
     if not fileName.endswith(".exe" or ".zip" or ".rar" or ".msi"):
