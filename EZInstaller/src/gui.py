@@ -80,6 +80,46 @@ createShortcutCheckboxStatus = IntVar()
 storage_location_entry.configure(state=DISABLED)
 
 
+
+def unzipper():
+    url_entry.configure(state=DISABLED)
+    storage_location_entry.configure(state=DISABLED)
+    stored_in_program_files_checkbox.configure(state=DISABLED)
+    create_shortcut_checkbox.configure(state=NORMAL)
+    submit_button.configure(state=DISABLED)
+    outputBox = Text(frm, width=50, height=10, font=NORM_FONT, state=DISABLED)
+    outputBox.grid(column=1, row=8, sticky=W, padx=10, pady=10)
+    if storedInProgramFiles == True:
+        storageLocation = "C:\\Program Files\\"
+    else:
+        storageLocation = storage_location_entry.get()
+
+    def append_to_output_box(text):
+        outputBox.configure(state=NORMAL)
+        outputBox.insert(END, text)
+        outputBox.configure(state=DISABLED)
+        # auto scroll to bottom
+        outputBox.see(END)
+        files = url.split(", " or ",")
+        for i in range(len(files)):
+            file[i] = requests.get(files[i])
+            if file[i].status_code == 200:
+                append_to_output_box("File found, preparing to download...\n")
+                append_to_output_box("Downloading file...\n")
+                with open(storageLocation + files[i].split("/")[-1], "wb") as f:
+                    f.write(file[i].content)
+                append_to_output_box("File downloaded.\n")
+                append_to_output_box("Extracting file...\n")
+                with zipfile.ZipFile(storageLocation + files[i].split("/")[-1], "r") as zip_ref:
+                    zip_ref.extractall(storageLocation)
+                append_to_output_box("File extracted.\n")
+                append_to_output_box("Deleting file...\n")
+                os.remove(storageLocation + files[i].split("/")[-1])
+                append_to_output_box("File deleted.\n")
+                if i != len(files) - 1:
+                    append_to_output_box("Moving To Next Zip...\n")
+        append_to_output_box("All files extracted.\n")
+
 def submit():
     pythoncom.CoInitialize()
     global fullPath
@@ -108,6 +148,7 @@ def submit():
     stored_in_program_files_checkbox.configure(state=DISABLED)
     create_shortcut_checkbox.configure(state=DISABLED)
     submit_button.configure(state=DISABLED)
+    unzipper_button.configure(state=DISABLED)
     if storedInProgramFiles == True:
         storageLocation = "C:\\Program Files\\"
     else:
@@ -120,7 +161,7 @@ def submit():
     print(f"run the file: {runTheFile}")
 
     outputBox = Text(frm, width=50, height=10, font=NORM_FONT, state=DISABLED)
-    outputBox.grid(column=1, row=7, sticky=W, padx=10, pady=10)
+    outputBox.grid(column=1, row=8, sticky=W, padx=10, pady=10)
 
     # append to output box
     def append_to_output_box(text):
@@ -237,7 +278,7 @@ def submit():
 
 # a check box with a label install to program files and if it is unchecked it will ask for a location
 stored_in_program_files_label = ttk.Label(
-    frm, text="Install to Program Files: ", font=NORM_FONT
+    frm, text="(Not Recommended For Unzipper) Install to Program Files: ", font=NORM_FONT
 )
 stored_in_program_files_label.grid(column=0, row=2, sticky=W, padx=10, pady=10)
 
@@ -257,7 +298,7 @@ storedInProgramFilesCheckboxStatus.set(1)
 stored_in_program_files_checkbox.grid(column=1, row=2, sticky=W, padx=10, pady=10)
 
 # a check box with a label create a shortcut and if it is unchecked it will not create a shortcut
-create_shortcut_label = ttk.Label(frm, text="Create Shortcut: ", font=NORM_FONT)
+create_shortcut_label = ttk.Label(frm, text="(Does Not Apply To Unzipper)Create Shortcut: ", font=NORM_FONT)
 create_shortcut_label.grid(column=0, row=4, sticky=W, padx=10, pady=10)
 
 create_shortcut_checkbox = ttk.Checkbutton(
@@ -279,8 +320,12 @@ submit_button = ttk.Button(
 )
 submit_button.grid(column=1, row=6, sticky=W, padx=10, pady=10)
 
+unzipper_button = ttk.Button(
+    frm, text="Unzipper", command=unzipper
+)
+unzipper_button.grid(column=1, row=7, sticky=W, padx=10, pady=10)
 
 root.title("EzInstaller")
-root.geometry("800x600")
+root.geometry("1200x600")
 root.iconbitmap("C:\\Program Files\\EZInstaller\\EZInstaller\\assets\\pictures\\logo.ico")
 root.mainloop()
