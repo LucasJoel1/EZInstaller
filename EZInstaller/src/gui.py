@@ -12,6 +12,7 @@ import threading
 import pythoncom
 from guimodules import *
 from globalmodules import *
+import tarfile
 
 # don't open a console window
 ctypes.windll.kernel32.SetConsoleTitleW("EzInstaller")
@@ -26,6 +27,7 @@ isZip = False
 isRar = False
 isMsi = False
 isWinget = False
+isTar = False
 isOther = False
 storedInProgramFiles = True
 storageLocation = None
@@ -82,42 +84,45 @@ storage_location_entry.configure(state=DISABLED)
 
 
 def unzipper():
-    url_entry.configure(state=DISABLED)
-    storage_location_entry.configure(state=DISABLED)
-    stored_in_program_files_checkbox.configure(state=DISABLED)
-    create_shortcut_checkbox.configure(state=NORMAL)
-    submit_button.configure(state=DISABLED)
     outputBox = Text(frm, width=50, height=10, font=NORM_FONT, state=DISABLED)
     outputBox.grid(column=1, row=8, sticky=W, padx=10, pady=10)
-    if storedInProgramFiles == True:
-        storageLocation = "C:\\Program Files\\"
-    else:
-        storageLocation = storage_location_entry.get()
-
     def append_to_output_box(text):
         outputBox.configure(state=NORMAL)
         outputBox.insert(END, text)
         outputBox.configure(state=DISABLED)
         # auto scroll to bottom
         outputBox.see(END)
-        files = url.split(", " or ",")
-        for i in range(len(files)):
-            file[i] = requests.get(files[i])
-            if file[i].status_code == 200:
-                append_to_output_box("File found, preparing to download...\n")
-                append_to_output_box("Downloading file...\n")
-                with open(storageLocation + files[i].split("/")[-1], "wb") as f:
-                    f.write(file[i].content)
-                append_to_output_box("File downloaded.\n")
-                append_to_output_box("Extracting file...\n")
-                with zipfile.ZipFile(storageLocation + files[i].split("/")[-1], "r") as zip_ref:
-                    zip_ref.extractall(storageLocation)
-                append_to_output_box("File extracted.\n")
-                append_to_output_box("Deleting file...\n")
-                os.remove(storageLocation + files[i].split("/")[-1])
-                append_to_output_box("File deleted.\n")
-                if i != len(files) - 1:
-                    append_to_output_box("Moving To Next Zip...\n")
+    append_to_output_box("Beginning Extraction Process...\n")
+    url_entry.configure(state=DISABLED)
+    storage_location_entry.configure(state=DISABLED)
+    stored_in_program_files_checkbox.configure(state=DISABLED)
+    create_shortcut_checkbox.configure(state=DISABLED)
+    submit_button.configure(state=DISABLED)
+    storedInProgramFiles = storedInProgramFilesCheckboxStatus.get()
+    if storedInProgramFiles == True:
+        storageLocation = "C:\\Program Files\\"
+        append_to_output_box("Storing in Program Files\n")
+    else:
+        storageLocation = storage_location_entry.get()
+    url = url_entry.get()
+    files = url.split(", " or ",")
+    for i in range(len(files)):
+        file[i] = requests.get(files[i])
+        if file[i].status_code == 200:
+            append_to_output_box("File found, preparing to download...\n")
+            append_to_output_box("Downloading file...\n")
+            with open(storageLocation + files[i].split("/")[-1], "wb") as f:
+                f.write(file[i].content)
+            append_to_output_box("File downloaded.\n")
+            append_to_output_box("Extracting file...\n")
+            with zipfile.ZipFile(storageLocation + files[i].split("/")[-1], "r") as zip_ref:
+                zip_ref.extractall(storageLocation)
+            append_to_output_box("File extracted.\n")
+            append_to_output_box("Deleting file...\n")
+            os.remove(storageLocation + files[i].split("/")[-1])
+            append_to_output_box("File deleted.\n")
+            if i != len(files) - 1:
+                append_to_output_box("Moving To Next Zip...\n")
         append_to_output_box("All files extracted.\n")
 
 def submit():
@@ -132,6 +137,7 @@ def submit():
     global isRar
     global isMsi
     global isWinget
+    global isTar
     global isOther
     global storedInProgramFiles
     global storageLocation
@@ -198,6 +204,9 @@ def submit():
     elif fileName.endswith(".msi"):
         isMsi = True
         append_to_output_box("File is an MSI file." + "\n")
+    elif "tar" in fileName:
+        isTar = True
+        append_to_output_box("File is a tar file." + "\n")
     else:
         isOther = True
         append_to_output_box("File is not an executable, zip, rar, or MSI file." + "\n")
@@ -268,6 +277,38 @@ def submit():
         append_to_output_box("MSI file detected." + "\n")
         append_to_output_box("Installing MSI file..." + "\n")
         os.system(f"msiexec /i {storageLocation + fileName}")
+        time.sleep(5)
+        sys.exit()
+    elif isRar == True:
+        append_to_output_box("RAR file detected." + "\n")
+        append_to_output_box("RAR is not currently supported" + "\n")
+    elif isTar == True:
+        append_to_output_box("Tar file detected." + "\n")
+        append_to_output_box("Extracting tar file..." + "\n")
+        with tarfile.open(storageLocation + fileName) as tar:
+            tar.extractall(storageLocation + fileName.split(".")[0])
+        os.remove(storageLocation + fileName)
+        append_to_output_box("Extraction complete." + "\n")
+        extractedDir = storageLocation + fileName.split(".")[0]
+        append_to_output_box(f"Finding executable in {extractedDir}" + "\n")
+        for root, dirs, files in os.walk(extractedDir):
+            for file in files:
+                if file.endswith(".exe"):
+                    # path of the file
+                    fullPath = os.path.join(root, file)
+                    executable = file
+                    append_to_output_box(f"Found executable: {executable}" + "\n")
+        if createShortcut == True:
+            append_to_output_box("Creating shortcut..." + "\n")
+            desktop = winshell.desktop()
+            shorthcut = desktop + "\\" + executable.split(".")[0] + ".lnk"
+            winshell.CreateShortcut(
+                Path=shorthcut, Target=fullPath, Description=executable.split(".")[0]
+            )
+            append_to_output_box("Shortcut created." + "\n")
+        elif createShortcut == False:
+            append_to_output_box("Shortcut not created due to user preferences" + "\n")
+        append_to_output_box("Installation complete" + "\n")
         time.sleep(5)
         sys.exit()
     else:

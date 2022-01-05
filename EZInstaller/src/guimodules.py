@@ -31,3 +31,14 @@ def create_shortcut_check(createShortcut, createShortcutCheckboxStatus):
         createShortcut = True
     else:
         createShortcut = False
+
+def stored_in_downloads_check(
+    storedInDownloads, storedInDownloadsCheckboxStatus, storage_location_entry
+):
+    if storedInDownloadsCheckboxStatus.get() == 1:
+        storage_location_entry.delete(0, END)
+        storage_location_entry.configure(state=DISABLED)
+        storedInDownloads = True
+    else:
+        storage_location_entry.configure(state=NORMAL)
+        storedInDownloads = False
