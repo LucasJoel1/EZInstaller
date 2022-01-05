@@ -187,8 +187,10 @@ def submit():
         append_to_output_box("Please check the URL and try again." + "\n")
         time.sleep(5)
         sys.exit()
-
-    fileName = file.headers["Content-Disposition"].split("filename=")[1]
+    try:
+        fileName = file.headers["Content-Disposition"].split("filename=")[1]
+    except:
+        fileName = file.url.split("/")[-1]
     print(f"fileName: {fileName}")
 
     append_to_output_box("Checking file type..." + "\n")
