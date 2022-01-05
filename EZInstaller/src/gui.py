@@ -204,9 +204,6 @@ def submit():
     elif fileName.endswith(".msi"):
         isMsi = True
         append_to_output_box("File is an MSI file." + "\n")
-    elif "tar" in fileName:
-        isTar = True
-        append_to_output_box("File is a tar file." + "\n")
     else:
         isOther = True
         append_to_output_box("File is not an executable, zip, rar, or MSI file." + "\n")
